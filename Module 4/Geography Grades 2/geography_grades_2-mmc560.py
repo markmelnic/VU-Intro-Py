@@ -27,21 +27,22 @@ with open("input.txt", "r") as input_file:
         average = sum(grades) / len(grades)
 
         if average >= 5.5:
-            if average >= 5.5 and average < 6:
-                average = 6
-            elif average - int(average) < 0.25:
+            if average - int(average) < 0.25:
                 average = int(average)
             elif average - int(average) >= 0.25 and average - int(average) < 0.75:
                 average = int(average) + 0.5
-            elif average - int(average) >= 0.5:
+            elif average - int(average) >= 0.75:
                 average = int(average) + 1
         else:
             if average - int(average) < 0.25:
                 average = int(average)
             elif average - int(average) >= 0.25 and average - int(average) < 0.75:
                 average = int(average) + 0.5
+            else:
+                average = int(average) + 1
+        if average >= 5.5 and average < 6:
+            average = 6
 
         print("%s has an average grade of %.1f" % (name, average))
 
     print("End of report")
-

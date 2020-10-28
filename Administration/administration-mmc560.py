@@ -25,8 +25,8 @@ with open("input.txt", "r") as input_file:
 
             average = sum(grades) / len(grades)
             if average >= 5.5 and average < 6:
-                average =  str(int(average) + 1) + "-"
-            else: 
+                average = str(int(average) + 1) + "-"
+            else:
                 average_fractional = average - int(average)
                 if average_fractional < 0.25:
                     average = int(average)
@@ -39,7 +39,7 @@ with open("input.txt", "r") as input_file:
 
         else:
             similarities, names = line.split(";")
-            
+
             graph = ""
             for num in similarities.split("="):
                 if int(num) == 0:
@@ -48,11 +48,11 @@ with open("input.txt", "r") as input_file:
                     graph += "-"
                 elif int(num) >= 20:
                     graph += "^"
-            print("    %s" % graph,end ="")
+            print("    %s" % graph, end="")
 
             names = names.split(",")
             if len(names) == 0 or names[0] == "":
-                print("\n    No matches found",end ="")
+                print("\n    No matches found", end="")
             else:
                 for name in names:
-                    print("\n   ", name, end ="")
+                    print("\n   ", name, end="")
