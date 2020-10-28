@@ -2,7 +2,7 @@
     Created on 28 oct. 2020
     @author: Mark Melnic """
 
-with open("Administration/input.txt", "r") as input_file:
+with open("input.txt", "r") as input_file:
     lines = input_file.readlines()
 
     for i, line in enumerate(lines):
