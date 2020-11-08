@@ -2,6 +2,8 @@
     Created on 27 oct. 2020
     @author: Mark Melnic """
 
+DISCOUNT_AMOUT = 15
+
 items = []
 
 for i in range(3):
@@ -12,7 +14,7 @@ for item in items:
     if item > max:
         max = item
 
-discount = max * 15 / 100
+discount = max * DISCOUNT_AMOUT / 100
 print("Discount: %.2f" % discount)
 
 total = sum(items) - discount
