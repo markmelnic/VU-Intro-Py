@@ -2,6 +2,7 @@
     Created on 28 oct. 2020
     @author: Mark Melnic """
 
+PRINT_TIMES = 3
 
 def message():
     print(
@@ -14,5 +15,5 @@ def message():
     )
 
 
-for i in range(3):
+for i in range(PRINT_TIMES):
     message()
