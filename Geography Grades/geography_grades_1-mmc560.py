@@ -1,5 +1,5 @@
 """ Assignment: geography grades 1
-    Created on 28 oct. 2020
+    Created on 9 nov. 2020
     @author: Mark Melnic """
 
 with open("input.txt", "r") as input_file:
