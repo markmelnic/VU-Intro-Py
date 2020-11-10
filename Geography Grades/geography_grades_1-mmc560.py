@@ -15,7 +15,7 @@ def process_student(line: str):
     print("%s has an average grade of %.2f" % (name, average))
 
 
-with open("Geography Grades/input.txt", "r") as input_file:
+with open("input.txt", "r") as input_file:
     students = input_file.readlines()
 
 print("Report for group 2b")
