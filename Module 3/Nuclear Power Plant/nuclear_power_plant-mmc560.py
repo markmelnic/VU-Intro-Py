@@ -4,6 +4,7 @@
 
 PRINT_TIMES = 3
 
+
 def message():
     print(
         """

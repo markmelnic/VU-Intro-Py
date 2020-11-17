@@ -11,7 +11,7 @@ reversed_alphabet = alphabet[::-1]
 for i in range(ROWS_NUMBER):
     line = ""
 
-    for j in range(int(ROW_LENGTH/2) - i):
+    for j in range(int(ROW_LENGTH / 2) - i):
         line += " "
 
     for j in range(i + 1):
@@ -20,7 +20,7 @@ for i in range(ROWS_NUMBER):
     for j in range(i):
         line += reversed_alphabet[len(alphabet) - abs(i - j)]
 
-    for j in range(int(ROW_LENGTH/2) - i):
+    for j in range(int(ROW_LENGTH / 2) - i):
         line += " "
 
     print(line)
