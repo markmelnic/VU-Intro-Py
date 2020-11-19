@@ -54,6 +54,14 @@ def get_average(grades):
     return str(average)
 
 
+def process_lines(lines):
+    for i, line in enumerate(lines):
+        if i % 2 == 0:
+            name_grades(line)
+        else:
+            representation(line)
+
+
 if __name__ == "__main__":
     filename = str(input("What is the file name (leave empty if \"input.txt\"): "))
     if filename == "":
@@ -62,8 +70,4 @@ if __name__ == "__main__":
     with open(filename, "r") as input_file:
         lines = input_file.readlines()
 
-    for i, line in enumerate(lines):
-        if i % 2 == 0:
-            name_grades(line)
-        else:
-            representation(line)
+    process_lines(lines)
