@@ -1,4 +1,4 @@
-'''
+"""
 Created on 30 Jan. 2012
 Finished on 6 Feb. 2012
 
@@ -30,7 +30,7 @@ Improvements:
 @author: Gerben Rozie
 @author: Sebastian Osterlund
 @author: Sander Benoist
-'''
+"""
 import tkinter as _tk
 import tkinter.dialog as _Dialog
 import tkinter.filedialog as _tkFileDialog
@@ -51,22 +51,24 @@ have_mpl = False
 try:
     import matplotlib as mpl
 
-    if _sys.platform == 'darwin':  # darwin == OS X
-        mpl.use('TkAgg')  # if TkAgg doesn't fix it for the student, try QT4Agg
+    if _sys.platform == "darwin":  # darwin == OS X
+        mpl.use("TkAgg")  # if TkAgg doesn't fix it for the student, try QT4Agg
 
-    if _sys.platform == 'linux' or _sys.platform == 'linux2':
-        mpl.rcParams['backend'] = 'QT4Agg'
+    if _sys.platform == "linux" or _sys.platform == "linux2":
+        mpl.rcParams["backend"] = "QT4Agg"
 
     import pylab as plt
 
-    if _sys.platform == 'linux' or _sys.platform == 'linux2':
-        plt.switch_backend('QT4Agg')  # Use QT4 for linux. Bug in TK.
+    if _sys.platform == "linux" or _sys.platform == "linux2":
+        plt.switch_backend("QT4Agg")  # Use QT4 for linux. Bug in TK.
     have_mpl = True
 except ImportError:
-    print("Could not import matplotlib. HouseMarketUserInterface and StockMarketUserInterface have been disabled.")
+    print(
+        "Could not import matplotlib. HouseMarketUserInterface and StockMarketUserInterface have been disabled."
+    )
 
-YAHOO_URL = 'https://query.yahooapis.com/v1/public/yql'
-ALPHA_VANTAGE_URL = 'http://www.alphavantage.co/query'
+YAHOO_URL = "https://query.yahooapis.com/v1/public/yql"
+ALPHA_VANTAGE_URL = "http://www.alphavantage.co/query"
 
 
 class _IPyException(Exception):
@@ -79,7 +81,11 @@ class _IPyException(Exception):
 
 def _verify_int(value_var, string_var, minimum=None, maximum=None):
     if not isinstance(value_var, int):
-        value = "%s not an int for %s, got %s" % (value_var, string_var, str(type(value_var))[1:-1])
+        value = "%s not an int for %s, got %s" % (
+            value_var,
+            string_var,
+            str(type(value_var))[1:-1],
+        )
         raise _IPyException(value)
     _verify_input(value_var, string_var, minimum, maximum)
 
@@ -87,32 +93,49 @@ def _verify_int(value_var, string_var, minimum=None, maximum=None):
 def _verify_float(value_var, string_var, minimum=None, maximum=None):
     if not isinstance(value_var, float):
         if not isinstance(value_var, int):
-            value = "%s is not a float or int for %s, got %s" % (value_var, string_var, str(type(value_var))[1:-1])
+            value = "%s is not a float or int for %s, got %s" % (
+                value_var,
+                string_var,
+                str(type(value_var))[1:-1],
+            )
             raise _IPyException(value)
     _verify_input(value_var, string_var, minimum, maximum)
 
 
 def _verify_str(value_var, string_var):
     if not isinstance(value_var, str):
-        value = "%s is not a string for %s, got %s" % (value_var, string_var, str(type(value_var))[1:-1])
+        value = "%s is not a string for %s, got %s" % (
+            value_var,
+            string_var,
+            str(type(value_var))[1:-1],
+        )
         raise _IPyException(value)
 
 
 def _verify_bool(value_var, string_var):
     if not isinstance(value_var, bool):
-        value = "%s is not a boolean for %s, got %s" % (value_var, string_var, str(type(value_var))[1:-1])
+        value = "%s is not a boolean for %s, got %s" % (
+            value_var,
+            string_var,
+            str(type(value_var))[1:-1],
+        )
         raise _IPyException(value)
 
 
 def _verify_input(value_var, string_var, minimum=None, maximum=None):
     if minimum is None:
-        minimum = float('-inf')
+        minimum = float("-inf")
     if maximum is None:
-        maximum = float('inf')
+        maximum = float("inf")
     if value_var >= minimum:
         if value_var <= maximum:
             return
-    value = "%s is out of bounds, expected range: %s to %s, got: %s" % (string_var, minimum, maximum, value_var)
+    value = "%s is out of bounds, expected range: %s to %s, got: %s" % (
+        string_var,
+        minimum,
+        maximum,
+        value_var,
+    )
     raise _IPyException(value)
 
 
@@ -155,23 +178,23 @@ class _LifeHolder(object):
 
 def file_input():
     """This function lets the user select a file to use for input.
-	Returns the file contents in a string.
-	"""
+    Returns the file contents in a string.
+    """
 
     global _ui_factory
     f = _AskInput(_ui_factory.mainroot).f
-    if f == '':
+    if f == "":
         return None
     return str(_sys.stdin.read())
 
 
 def ask_user(question, *options):
     """Ask the user a question.
-	Parameters:
-	- question: the string to ask the user
-	- options: arbitrary list of arguments (at least 1)
-	Returns the chosen option by the user or None if nothing was chosen (e.g. hit Escape).
-	"""
+    Parameters:
+    - question: the string to ask the user
+    - options: arbitrary list of arguments (at least 1)
+    Returns the chosen option by the user or None if nothing was chosen (e.g. hit Escape).
+    """
 
     if len(options) == 0:
         value = "User needs to be able to select at least 1 answer"
@@ -180,7 +203,7 @@ def ask_user(question, *options):
     return _AskUser(_ui_factory.mainroot, question, options).answer
 
 
-class _Factory():
+class _Factory:
     def __init__(self):
         self.mainroot = _tk.Tk()
         self.mainroot.withdraw()
@@ -192,7 +215,7 @@ class _AskInput(object):
         root = _tk.Toplevel(mainroot)
         root.withdraw()
         self.f = _tkFileDialog.askopenfilename(parent=root)
-        if self.f is not '':
+        if self.f is not "":
             _sys.stdin = open(self.f)
         root.destroy()
 
@@ -201,12 +224,14 @@ class _AskUser(object):
     def __init__(self, mainroot, question, options):
         root = _tk.Toplevel(mainroot)
         root.withdraw()
-        dg = _Dialog.Dialog(None,
-                            title="",
-                            text=question,
-                            default=0,
-                            bitmap=_tkMessageBox.QUESTION,
-                            strings=options)
+        dg = _Dialog.Dialog(
+            None,
+            title="",
+            text=question,
+            default=0,
+            bitmap=_tkMessageBox.QUESTION,
+            strings=options,
+        )
         self.answer = options[dg.num]
         root.destroy()
 
@@ -214,20 +239,20 @@ class _AskUser(object):
 class OthelloReplayUserInterface(object):
     def __init__(self, scale=1.0):
         """This class starts the OthelloReplayUserInterface.
-		Constants:
-		- NUMBER_OF_ROWS
-		- NUMBER_OF_COLUMNS
-		- EMPTY
-		- WHITE
-		- BLACK
+        Constants:
+        - NUMBER_OF_ROWS
+        - NUMBER_OF_COLUMNS
+        - EMPTY
+        - WHITE
+        - BLACK
 
-		Parameters for the class: (none)
+        Parameters for the class: (none)
 
-		Optional parameters:
-		- scale: 0.25 to 1.0
-		"""
+        Optional parameters:
+        - scale: 0.25 to 1.0
+        """
 
-        _verify_float(scale, 'Scale', 0.25, 1.0)
+        _verify_float(scale, "Scale", 0.25, 1.0)
         global _ui_factory
         self.othello_replay = _Othello(_ui_factory.mainroot, scale)
         self.NUMBER_OF_ROWS = _Othello.NUMBER_OF_ROWS
@@ -237,23 +262,21 @@ class OthelloReplayUserInterface(object):
         self.BLACK = _Othello.BLACK
 
     def place(self, x, y, color):
-        """Place an Othello piece (defined by 'color') on the given X and Y coordinates.
-		"""
+        """Place an Othello piece (defined by 'color') on the given X and Y coordinates."""
 
-        _verify_int(x, 'X', 0, self.NUMBER_OF_COLUMNS - 1)
-        _verify_int(y, 'Y', 0, self.NUMBER_OF_ROWS - 1)
+        _verify_int(x, "X", 0, self.NUMBER_OF_COLUMNS - 1)
+        _verify_int(y, "Y", 0, self.NUMBER_OF_ROWS - 1)
         # 0 = empty, 1 = white, 2 = black, 3 = white_t, 4 = black_t
-        _verify_int(color, 'Color', 0, 4)
+        _verify_int(color, "Color", 0, 4)
         self.othello_replay.place(x, y, color)
 
     def place_transparent(self, x, y, color):
-        """Place a semi-transparent Othello piece (defined by 'color') on the given X and Y coordinates.
-		"""
+        """Place a semi-transparent Othello piece (defined by 'color') on the given X and Y coordinates."""
 
-        _verify_int(x, 'X', 0, self.NUMBER_OF_COLUMNS - 1)
-        _verify_int(y, 'Y', 0, self.NUMBER_OF_ROWS - 1)
+        _verify_int(x, "X", 0, self.NUMBER_OF_COLUMNS - 1)
+        _verify_int(y, "Y", 0, self.NUMBER_OF_ROWS - 1)
         # 0 = empty, 1 = white_t, 2 = black_t (before next step in code)
-        _verify_int(color, 'Color', 0, 2)
+        _verify_int(color, "Color", 0, 2)
         if color == self.EMPTY:
             self.place(x, y, self.EMPTY)
         else:
@@ -261,54 +284,51 @@ class OthelloReplayUserInterface(object):
 
     def clear(self):
         """Clears the display.
-		Note: this does not clear the text area!
-		"""
+        Note: this does not clear the text area!
+        """
 
         self.othello_replay.clear()
 
     def show(self):
-        """Show the changes made to the display (i.e. after calling place or clear).
-		"""
+        """Show the changes made to the display (i.e. after calling place or clear)."""
 
         self.othello_replay.show()
 
     def print_(self, text):
         """Print text to the text area on the display.
-		This function does not add a trailing newline by itself.
-		"""
+        This function does not add a trailing newline by itself.
+        """
 
         _verify_str(text, "Text")
         self.othello_replay.print_(text)
 
     def clear_text(self):
-        """Clears the text area on the display.
-		"""
+        """Clears the text area on the display."""
 
         self.othello_replay.clear_text()
 
     def wait(self, ms):
         """Let your program wait for an amount of milliseconds.
 
-		This function only guarantees that it will wait at least this amount of time.
-		If the system, i.e., is too busy, then this time might increase.
-		- Python time module.
-		"""
+        This function only guarantees that it will wait at least this amount of time.
+        If the system, i.e., is too busy, then this time might increase.
+        - Python time module.
+        """
 
         _verify_int(ms, "Waiting time", 0)
         self.othello_replay.wait(ms)
 
     def close(self):
-        """Closes the display and stops your program.
-		"""
+        """Closes the display and stops your program."""
 
         self.othello_replay.close()
 
     def stay_open(self):
         """Force the window to remain open.
-		Only has effect on Mac OS to prevent the window from closing after the execution finishes.
+        Only has effect on Mac OS to prevent the window from closing after the execution finishes.
 
-		Make sure that this is the last statement you call when including it because the code does NOT continue after this.
-		"""
+        Make sure that this is the last statement you call when including it because the code does NOT continue after this.
+        """
 
         global _ui_factory
         _ui_factory.mainroot.mainloop()
@@ -343,7 +363,11 @@ class _Othello(object):
         self.othello_size = int(800 * scale)
 
         # create main frame
-        self.frame = _tk.Frame(self.root, width=self.othello_size, height=self.othello_size + self.text_height)
+        self.frame = _tk.Frame(
+            self.root,
+            width=self.othello_size,
+            height=self.othello_size + self.text_height,
+        )
         self.frame.pack_propagate(0)
         self.frame.pack()
 
@@ -355,8 +379,14 @@ class _Othello(object):
         self.img_refs = []  # for storing references to images - order: white, black
 
         # create and fill the canvas --> paintable area
-        self.c = _tk.Canvas(self.frame, width=self.othello_size, height=self.othello_size, bg=self.BACKGROUND, bd=0,
-                            highlightthickness=0)
+        self.c = _tk.Canvas(
+            self.frame,
+            width=self.othello_size,
+            height=self.othello_size,
+            bg=self.BACKGROUND,
+            bd=0,
+            highlightthickness=0,
+        )
         self.c.pack()
         self.c.focus_set()
         self.fill_canvas()
@@ -364,7 +394,9 @@ class _Othello(object):
         # create the textholder
         self.scrollbar = _tk.Scrollbar(self.frame)
         self.scrollbar.pack(side=_tk.RIGHT, fill=_tk.Y)
-        self.textarea = _tk.Text(self.frame, yscrollcommand=self.scrollbar.set, width=self.othello_size)
+        self.textarea = _tk.Text(
+            self.frame, yscrollcommand=self.scrollbar.set, width=self.othello_size
+        )
         self.textarea.pack(side=_tk.LEFT, fill=_tk.BOTH)
         self.scrollbar.config(command=self.textarea.yview)
         self.textarea.config(state=_tk.DISABLED)
@@ -439,14 +471,14 @@ class _Othello(object):
             x1 = x0
             y1 = self.ypad + self.ystep * self.NUMBER_OF_ROWS + 1
             coords = x0, y0, x1, y1
-            self.c.create_line(coords, fill='black')
+            self.c.create_line(coords, fill="black")
         for j in range(self.NUMBER_OF_ROWS + 1):
             x0 = self.xpad
             y0 = self.ypad + self.ystep * j
             x1 = self.xpad + self.xstep * self.NUMBER_OF_COLUMNS + 1
             y1 = y0
             coords = x0, y0, x1, y1
-            self.c.create_line(coords, fill='black')
+            self.c.create_line(coords, fill="black")
         for i in range(self.NUMBER_OF_COLUMNS):
             x0 = self.xpad + self.xstep / 2 + self.xstep * i
             y0 = self.ypad / 2
@@ -454,8 +486,8 @@ class _Othello(object):
             y1 = self.othello_size - self.ystep / 2
             coords0 = x0, y0
             coords1 = x1, y1
-            self.c.create_text(coords0, text=chr(ord('a') + i))
-            self.c.create_text(coords1, text=chr(ord('a') + i))
+            self.c.create_text(coords0, text=chr(ord("a") + i))
+            self.c.create_text(coords1, text=chr(ord("a") + i))
         for j in range(self.NUMBER_OF_ROWS):
             x0 = int(self.xpad / 2)
             y0 = self.ypad + self.ystep / 2 + self.ystep * j
@@ -463,8 +495,8 @@ class _Othello(object):
             y1 = y0
             coords0 = x0, y0
             coords1 = x1, y1
-            self.c.create_text(coords0, text='%s' % (j + 1))
-            self.c.create_text(coords1, text='%s' % (j + 1))
+            self.c.create_text(coords0, text="%s" % (j + 1))
+            self.c.create_text(coords1, text="%s" % (j + 1))
 
     def mix_color(self, c1, c2, mix):
         return c1 if mix == 0 else int((c1 + c2) / 2)
@@ -481,7 +513,16 @@ class _Othello(object):
             x2 = x0 + (1.0 - (1.0 - scale) / 2.0) * self.xstep
             y2 = y0 + (1.0 - (1.0 - scale) / 2.0) * self.ystep
             result.append(
-                self.c.create_oval(x1, y1, x2, y2, state=_tk.HIDDEN, fill="#%02X%02X%02X" % (r, g, b), width=0))
+                self.c.create_oval(
+                    x1,
+                    y1,
+                    x2,
+                    y2,
+                    state=_tk.HIDDEN,
+                    fill="#%02X%02X%02X" % (r, g, b),
+                    width=0,
+                )
+            )
         if img == self.BLACK:
             r = self.mix_color(0, self.r, mix)
             g = self.mix_color(0, self.g, mix)
@@ -492,14 +533,28 @@ class _Othello(object):
             x2 = x0 + (1.0 - (1.0 - scale) / 2.0) * self.xstep
             y2 = y0 + (1.0 - (1.0 - scale) / 2.0) * self.ystep
             result.append(
-                self.c.create_oval(x1, y1, x2, y2, state=_tk.HIDDEN, fill="#%02X%02X%02X" % (r, g, b), width=0))
+                self.c.create_oval(
+                    x1,
+                    y1,
+                    x2,
+                    y2,
+                    state=_tk.HIDDEN,
+                    fill="#%02X%02X%02X" % (r, g, b),
+                    width=0,
+                )
+            )
 
         return result
 
     def create_othello_pieces(self):
         mixer = 0, 0, 1, 1
         imgtype = self.WHITE, self.BLACK, self.WHITE, self.BLACK
-        boards = self.white_board, self.black_board, self.white_ghost_board, self.black_ghost_board
+        boards = (
+            self.white_board,
+            self.black_board,
+            self.white_ghost_board,
+            self.black_ghost_board,
+        )
         for n in range(len(boards)):
             for i in range(self.NUMBER_OF_COLUMNS):
                 boards[n].append([])
@@ -512,8 +567,16 @@ class _Othello(object):
     def fill_canvas(self):
         self.xstep = int(self.othello_size / (self.NUMBER_OF_COLUMNS + 2))
         self.ystep = int(self.othello_size / (self.NUMBER_OF_ROWS + 2))
-        self.xpad = self.othello_size - self.NUMBER_OF_COLUMNS * self.xstep / 2 - self.othello_size / 2
-        self.ypad = self.othello_size - self.NUMBER_OF_ROWS * self.ystep / 2 - self.othello_size / 2
+        self.xpad = (
+            self.othello_size
+            - self.NUMBER_OF_COLUMNS * self.xstep / 2
+            - self.othello_size / 2
+        )
+        self.ypad = (
+            self.othello_size
+            - self.NUMBER_OF_ROWS * self.ystep / 2
+            - self.othello_size / 2
+        )
         self.create_othello_grid()
         self.create_othello_pieces()
 
@@ -521,53 +584,51 @@ class _Othello(object):
 class BarChartUserInterface(object):
     def __init__(self, bar_count):
         """This class starts the BarChartUserInterface.
-		Constants: (none)
+        Constants: (none)
 
-		Parameters for the class:
-		- bar_count: at least 1
+        Parameters for the class:
+        - bar_count: at least 1
 
-		Optional parameters: (none)
-		"""
+        Optional parameters: (none)
+        """
         _verify_int(bar_count, "Bar count", 1)
         global _ui_factory
         self.bar_chart = _BarChart(bar_count, _ui_factory.mainroot)
 
     def set_bar_name(self, bar_index, text):
         """Set a name, provided by 'text', to a given bar_index.
-		Note: this function's effects are visible without calling show.
-		"""
+        Note: this function's effects are visible without calling show.
+        """
 
         _verify_int(bar_index, "Bar index", 0, self.bar_chart.bar_count - 1)
         _verify_str(text, "Text")
         self.bar_chart.set_bar_name(bar_index, text)
 
     def raise_bar(self, bar_index):
-        """Increment the given bar_index by 1.
-		"""
+        """Increment the given bar_index by 1."""
 
         _verify_int(bar_index, "Bar index", 0, self.bar_chart.bar_count - 1)
         self.bar_chart.raise_bar(bar_index)
 
     def show(self):
-        """Show the changes made to the display (i.e. after calling raise_bar).
-		"""
+        """Show the changes made to the display (i.e. after calling raise_bar)."""
 
         self.bar_chart.show()
 
     def show_names(self, value):
         """Whether or not to show the names of the bars.
-		Value given must be a boolean.
-		Default at start is False.
-		"""
+        Value given must be a boolean.
+        Default at start is False.
+        """
 
         _verify_bool(value, "Show names")
         self.bar_chart.show_names(value)
 
     def show_values(self, value):
         """Whether or not to show the values of the bars.
-		Value given must be a boolean.
-		Default at start is True.
-		"""
+        Value given must be a boolean.
+        Default at start is True.
+        """
 
         _verify_bool(value, "Show values")
         self.bar_chart.show_values(value)
@@ -575,26 +636,25 @@ class BarChartUserInterface(object):
     def wait(self, ms):
         """Let your program wait for an amount of milliseconds.
 
-		This function only guarantees that it will wait at least this amount of time.
-		If the system, i.e., is too busy, then this time might increase.
-		- Python time module.
-		"""
+        This function only guarantees that it will wait at least this amount of time.
+        If the system, i.e., is too busy, then this time might increase.
+        - Python time module.
+        """
 
         _verify_int(ms, "Waiting time", 0)
         self.bar_chart.wait(ms)
 
     def close(self):
-        """Closes the display and stops your program.
-		"""
+        """Closes the display and stops your program."""
 
         self.bar_chart.close()
 
     def stay_open(self):
         """Force the window to remain open.
-		Only has effect on Mac OS to prevent the window from closing after the execution finishes.
+        Only has effect on Mac OS to prevent the window from closing after the execution finishes.
 
-		Make sure that this is the last statement you call when including it because the code does NOT continue after this.
-		"""
+        Make sure that this is the last statement you call when including it because the code does NOT continue after this.
+        """
 
         global _ui_factory
         _ui_factory.mainroot.mainloop()
@@ -620,10 +680,17 @@ class _BarChart(object):
         self.frame.pack(fill=_tk.BOTH, expand=_tk.YES)
         self.height = 575
         self.width = 400
-        self.c = _tk.Canvas(self.frame, width=self.width, height=self.height, bg='white', bd=0, highlightthickness=0)
+        self.c = _tk.Canvas(
+            self.frame,
+            width=self.width,
+            height=self.height,
+            bg="white",
+            bd=0,
+            highlightthickness=0,
+        )
         self.c.pack(fill=_tk.BOTH, expand=_tk.YES)
         self.c.focus_set()
-        self.c.bind('<Configure>', self.redraw)
+        self.c.bind("<Configure>", self.redraw)
         self.bar_max = 0
         self.bars = []
         self.names = []
@@ -637,7 +704,7 @@ class _BarChart(object):
         _os._exit(0)
 
     def set_bar_name(self, bar_index, text):
-        self.names[bar_index] = text;
+        self.names[bar_index] = text
         self.redraw()
         global _ui_factory
         _ui_factory.mainroot.update()
@@ -690,7 +757,7 @@ class _BarChart(object):
     def create_bars(self):
         for i in range(self.bar_count):  # @UnusedVariable
             self.bars.append(0)
-            self.names.append('')
+            self.names.append("")
 
     def redraw(self, event=None):
         if event != None:
@@ -702,9 +769,9 @@ class _BarChart(object):
 
     def fill_canvas(self):
         xstep = int(self.width / (self.bar_count + 2))
-        xpad = int((self.width - xstep * self.bar_count) / 2) #- self.width / 2
+        xpad = int((self.width - xstep * self.bar_count) / 2)  # - self.width / 2
         xspacing = int(xstep / 10)
-        ypad = int(self.height / 10) #- self.height / 2
+        ypad = int(self.height / 10)  # - self.height / 2
         ypadtext = int(ypad / 3)
         for i in range(self.bar_count):
             # draw the bar
@@ -725,37 +792,37 @@ class _BarChart(object):
             x1 = xpad + xstep * i + int(xstep / 2)
             y1 -= ypadtext
             coords = x1, y1
-            value = ("%d" % self.bars[i]) if self.show_values_bool else ''
+            value = ("%d" % self.bars[i]) if self.show_values_bool else ""
             self.c.create_text(coords, text=value)
 
             # draw the names
             x0 = xpad + xstep * i + int(xstep / 2)
             y0 += ypadtext
             coords = x0, y0
-            name = self.names[i] if self.show_names_bool else ''
+            name = self.names[i] if self.show_names_bool else ""
             self.c.create_text(coords, text=name)
 
 
 class SnakeUserInterface(object):
     def __init__(self, width, height, scale=1.0):
         """This class starts the SnakeUserInterface.
-		Constants:
-		- EMPTY
-		- FOOD
-		- SNAKE
-		- WALL
+        Constants:
+        - EMPTY
+        - FOOD
+        - SNAKE
+        - WALL
 
-		Parameters for the class:
-		- width: at least 1
-		- height: at least 1
+        Parameters for the class:
+        - width: at least 1
+        - height: at least 1
 
-		Optional parameters:
-		- scale: 0.25 to 1.0
-		"""
+        Optional parameters:
+        - scale: 0.25 to 1.0
+        """
 
         _verify_int(width, "Width", 1)
         _verify_int(height, "Height", 1)
-        _verify_float(scale, 'Scale', 0.25, 1.0)
+        _verify_float(scale, "Scale", 0.25, 1.0)
         global _ui_factory
         self.snake_interface = _Snake(width, height, _ui_factory.mainroot, scale)
         self.EMPTY = _Snake.EMPTY
@@ -764,23 +831,21 @@ class SnakeUserInterface(object):
         self.WALL = _Snake.WALL
 
     def place(self, x, y, color):
-        """Place a Snake piece (defined by 'color') on the given X and Y coordinates.
-		"""
+        """Place a Snake piece (defined by 'color') on the given X and Y coordinates."""
 
-        _verify_int(x, 'X', 0, self.snake_interface.width - 1)
-        _verify_int(y, 'Y', 0, self.snake_interface.height - 1)
+        _verify_int(x, "X", 0, self.snake_interface.width - 1)
+        _verify_int(y, "Y", 0, self.snake_interface.height - 1)
         # 0 = empty, 1 = food, 2 = snake, 3 = wall, 4 = food_t, 5 = snake_t, 6 = wall_t
-        _verify_int(color, 'Color', 0, 6)
+        _verify_int(color, "Color", 0, 6)
         self.snake_interface.place(x, y, color)
 
     def place_transparent(self, x, y, color):
-        """Place a semi-transparent Snake piece (defined by 'color') on the given X and Y coordinates.
-		"""
+        """Place a semi-transparent Snake piece (defined by 'color') on the given X and Y coordinates."""
 
-        _verify_int(x, 'X', 0, self.snake_interface.width - 1)
-        _verify_int(y, 'Y', 0, self.snake_interface.height - 1)
+        _verify_int(x, "X", 0, self.snake_interface.width - 1)
+        _verify_int(y, "Y", 0, self.snake_interface.height - 1)
         # 0 = empty, 1 = food_t, 2 = snake_t, 3 = wall_t (before next step in code)
-        _verify_int(color, 'Color', 0, 6)
+        _verify_int(color, "Color", 0, 6)
         if color == self.EMPTY:
             self.place(x, y, self.EMPTY)
         else:
@@ -788,84 +853,81 @@ class SnakeUserInterface(object):
 
     def clear(self):
         """Clears the display.
-		Note: this does not clear the text area!
-		"""
+        Note: this does not clear the text area!
+        """
 
         self.snake_interface.clear()
 
     def show(self):
-        """Show the changes made to the display (i.e. after calling place or clear)
-		"""
+        """Show the changes made to the display (i.e. after calling place or clear)"""
 
         self.snake_interface.show()
 
     def get_event(self):
         """Returns an event generated from the display.
-		The returned object has 2 properties:
-		- name: holds the group which the event belongs to.
-		- data: holds useful information for the user.
-		"""
+        The returned object has 2 properties:
+        - name: holds the group which the event belongs to.
+        - data: holds useful information for the user.
+        """
 
         return self.snake_interface.get_event()
 
     def set_animation_speed(self, fps):
         """Set an event to repeat 'fps' times per second.
-		If the value is set to 0 or less, the repeating will halt.
-		In theory the maximum value is 1000, but this depends on activity of the system.
+        If the value is set to 0 or less, the repeating will halt.
+        In theory the maximum value is 1000, but this depends on activity of the system.
 
-		The generated events (available by using get_event) have these properties:
-		- name: 'alarm'.
-		- data: 'refresh'.
-		"""
+        The generated events (available by using get_event) have these properties:
+        - name: 'alarm'.
+        - data: 'refresh'.
+        """
 
         _verify_float(fps, "Animation speed")
         self.snake_interface.set_animation_speed(fps)
 
     def print_(self, text):
         """Print text to the text area on the display.
-		This function does not add a trailing newline by itself.
-		"""
+        This function does not add a trailing newline by itself.
+        """
 
         _verify_str(text, "Text")
         self.snake_interface.print_(text)
 
     def clear_text(self):
-        """Clears the text area on the display.
-		"""
+        """Clears the text area on the display."""
 
         self.snake_interface.clear_text()
 
     def wait(self, ms):
         """Let your program wait for an amount of milliseconds.
 
-		This function only guarantees that it will wait at least this amount of time.
-		If the system, i.e., is too busy, then this time might increase.
-		- Python time module.
-		"""
+        This function only guarantees that it will wait at least this amount of time.
+        If the system, i.e., is too busy, then this time might increase.
+        - Python time module.
+        """
 
         _verify_int(ms, "Waiting time", 0)
         self.snake_interface.wait(ms)
 
     def random(self, maximum):
         """Picks a random integer ranging from 0 <= x < maximum
-		Minimum for maximum is 1
-		"""
+        Minimum for maximum is 1
+        """
 
-        _verify_int(maximum, 'Random', 1)
+        _verify_int(maximum, "Random", 1)
         return self.snake_interface.random(maximum)
 
     def close(self):
-        """Closes the display and stops your program.
-		"""
+        """Closes the display and stops your program."""
 
         self.snake_interface.close()
 
     def stay_open(self):
         """Force the window to remain open.
-		Only has effect on Mac OS to prevent the window from closing after the execution finishes.
+        Only has effect on Mac OS to prevent the window from closing after the execution finishes.
 
-		Make sure that this is the last statement you call when including it because the code does NOT continue after this.
-		"""
+        Make sure that this is the last statement you call when including it because the code does NOT continue after this.
+        """
 
         global _ui_factory
         _ui_factory.mainroot.mainloop()
@@ -902,8 +964,11 @@ class _Snake(object):
         self.text_height = int(100 * scale)
 
         # create main frame
-        self.frame = _tk.Frame(self.root, width=self.size_per_coord * self.width,
-                               height=self.size_per_coord * self.height + self.text_height)
+        self.frame = _tk.Frame(
+            self.root,
+            width=self.size_per_coord * self.width,
+            height=self.size_per_coord * self.height + self.text_height,
+        )
         self.frame.pack_propagate(0)
         self.frame.pack()
 
@@ -914,11 +979,19 @@ class _Snake(object):
         self.food_ghost_board = []
         self.snake_ghost_board = []
         self.wall_ghost_board = []
-        self.img_refs = []  # for storing references to images - order: food, snake, wall, food_t, snake_t, wall_t
+        self.img_refs = (
+            []
+        )  # for storing references to images - order: food, snake, wall, food_t, snake_t, wall_t
 
         # create and fill the canvas --> paintable area
-        self.c = _tk.Canvas(self.frame, width=self.size_per_coord * self.width,
-                            height=self.size_per_coord * self.height, bg="black", bd=0, highlightthickness=0)
+        self.c = _tk.Canvas(
+            self.frame,
+            width=self.size_per_coord * self.width,
+            height=self.size_per_coord * self.height,
+            bg="black",
+            bd=0,
+            highlightthickness=0,
+        )
         self.c.pack()
         self.last_x = -1  # used to generate mouseOver/Exit events
         self.last_y = -1  # used to generate mouseOver/Exit events
@@ -1046,7 +1119,16 @@ class _Snake(object):
             x2 = x0 + (1.0 - (1.0 - scale) / 2.0) * self.size_per_coord
             y2 = y0 + self.size_per_coord
             result.append(
-                self.c.create_oval(x1, y1, x2, y2, state=_tk.HIDDEN, fill="#%02X%02X%02X" % (r, g, b), width=0))
+                self.c.create_oval(
+                    x1,
+                    y1,
+                    x2,
+                    y2,
+                    state=_tk.HIDDEN,
+                    fill="#%02X%02X%02X" % (r, g, b),
+                    width=0,
+                )
+            )
             r = int(64 / (1 + mix))
             g = int(255 / (1 + mix))
             b = int(64 / (1 + mix))
@@ -1056,7 +1138,16 @@ class _Snake(object):
             x2 = x1
             y2 = y0 + scale * self.size_per_coord
             result.append(
-                self.c.create_line(x1, y1, x2, y2, state=_tk.HIDDEN, fill="#%02X%02X%02X" % (r, g, b), width=2))
+                self.c.create_line(
+                    x1,
+                    y1,
+                    x2,
+                    y2,
+                    state=_tk.HIDDEN,
+                    fill="#%02X%02X%02X" % (r, g, b),
+                    width=2,
+                )
+            )
         if img == self.SNAKE:
             r = int(32 / (1 + mix))
             g = int(255 / (1 + mix))
@@ -1066,7 +1157,16 @@ class _Snake(object):
             x2 = x0 + self.size_per_coord
             y2 = y0 + self.size_per_coord
             result.append(
-                self.c.create_oval(x1, y1, x2, y2, state=_tk.HIDDEN, fill="#%02X%02X%02X" % (r, g, b), width=0))
+                self.c.create_oval(
+                    x1,
+                    y1,
+                    x2,
+                    y2,
+                    state=_tk.HIDDEN,
+                    fill="#%02X%02X%02X" % (r, g, b),
+                    width=0,
+                )
+            )
         if img == self.WALL:
             r = int(200 / (1 + mix))
             g = int(100 / (1 + mix))
@@ -1076,14 +1176,30 @@ class _Snake(object):
             x2 = x0 + self.size_per_coord
             y2 = y0 + self.size_per_coord
             result.append(
-                self.c.create_rectangle(x1, y1, x2, y2, state=_tk.HIDDEN, fill="#%02X%02X%02X" % (r, g, b), width=0))
+                self.c.create_rectangle(
+                    x1,
+                    y1,
+                    x2,
+                    y2,
+                    state=_tk.HIDDEN,
+                    fill="#%02X%02X%02X" % (r, g, b),
+                    width=0,
+                )
+            )
 
         return result
 
     def create_snake_pieces(self):
         mixer = 0, 0, 0, 1, 1, 1
         imgtype = self.FOOD, self.SNAKE, self.WALL, self.FOOD, self.SNAKE, self.WALL
-        boards = self.food_board, self.snake_board, self.wall_board, self.food_ghost_board, self.snake_ghost_board, self.wall_ghost_board
+        boards = (
+            self.food_board,
+            self.snake_board,
+            self.wall_board,
+            self.food_ghost_board,
+            self.snake_ghost_board,
+            self.wall_ghost_board,
+        )
         for n in range(len(boards)):
             for i in range(self.width):
                 boards[n].append([])
@@ -1126,38 +1242,38 @@ class _Snake(object):
 
     def alt_number_event(self, event):
         if event.char == event.keysym:
-            if ord(event.char) >= ord('0') and ord(event.char) <= ord('9'):
+            if ord(event.char) >= ord("0") and ord(event.char) <= ord("9"):
                 self.generate_event("alt_number", event.char)
 
     def key_event(self, event):
         if event.char == event.keysym:
-            if ord(event.char) >= ord('0') and ord(event.char) <= ord('9'):
+            if ord(event.char) >= ord("0") and ord(event.char) <= ord("9"):
                 self.generate_event("number", event.char)
-            elif ord(event.char) >= ord('a') and ord(event.char) <= ord('z'):
+            elif ord(event.char) >= ord("a") and ord(event.char) <= ord("z"):
                 self.generate_event("letter", event.char)
-            elif ord(event.char) >= ord('A') and ord(event.char) <= ord('Z'):
+            elif ord(event.char) >= ord("A") and ord(event.char) <= ord("Z"):
                 self.generate_event("letter", event.char)
             else:
                 self.generate_event("other", event.char)
-        elif event.keysym == 'Up':
+        elif event.keysym == "Up":
             self.generate_event("arrow", "u")
-        elif event.keysym == 'Down':
+        elif event.keysym == "Down":
             self.generate_event("arrow", "d")
-        elif event.keysym == 'Left':
+        elif event.keysym == "Left":
             self.generate_event("arrow", "l")
-        elif event.keysym == 'Right':
+        elif event.keysym == "Right":
             self.generate_event("arrow", "r")
-        elif event.keysym == 'Multi_Key':
+        elif event.keysym == "Multi_Key":
             return
-        elif event.keysym == 'Caps_Lock':
+        elif event.keysym == "Caps_Lock":
             self.generate_event("other", "caps lock")
-        elif event.keysym == 'Num_Lock':
+        elif event.keysym == "Num_Lock":
             self.generate_event("other", "num lock")
-        elif event.keysym == 'Shift_L' or event.keysym == 'Shift_R':
+        elif event.keysym == "Shift_L" or event.keysym == "Shift_R":
             self.generate_event("other", "shift")
-        elif event.keysym == 'Control_L' or event.keysym == 'Control_R':
+        elif event.keysym == "Control_L" or event.keysym == "Control_R":
             self.generate_event("other", "control")
-        elif event.keysym == 'Alt_L' or event.keysym == 'Alt_R':
+        elif event.keysym == "Alt_L" or event.keysym == "Alt_R":
             self.generate_event("other", "alt")
         else:
             self.generate_event("other", event.keysym)
@@ -1191,116 +1307,112 @@ class _Snake(object):
 class LifeUserInterface(object):
     def __init__(self, width, height, scale=1.0):
         """This class starts the LifeUserInterface.
-		Constants:
-		- DEAD
-		- ALIVE
+        Constants:
+        - DEAD
+        - ALIVE
 
-		Parameters for the class:
-		- width: at least 1
-		- height: at least 1
+        Parameters for the class:
+        - width: at least 1
+        - height: at least 1
 
-		Optional parameters:
-		- scale: 0.25 to 1.0
-		"""
+        Optional parameters:
+        - scale: 0.25 to 1.0
+        """
 
         _verify_int(width, "Width", 1)
         _verify_int(height, "Height", 1)
-        _verify_float(scale, 'Scale', 0.25, 1.0)
+        _verify_float(scale, "Scale", 0.25, 1.0)
         global _ui_factory
         self.life_interface = _Life(width, height, _ui_factory.mainroot, scale)
         self.DEAD = _Life.DEAD
         self.ALIVE = _Life.ALIVE
 
     def place(self, x, y, color):
-        """Place a Life piece (defined by 'color') on the given X and Y coordinates.
-		"""
+        """Place a Life piece (defined by 'color') on the given X and Y coordinates."""
 
-        _verify_int(x, 'X', 0, self.life_interface.width - 1)
-        _verify_int(y, 'Y', 0, self.life_interface.height - 1)
+        _verify_int(x, "X", 0, self.life_interface.width - 1)
+        _verify_int(y, "Y", 0, self.life_interface.height - 1)
         # 0 = empty, 1 = dead, 2 = alive
-        _verify_int(color, 'Color', 0, 2)
+        _verify_int(color, "Color", 0, 2)
         self.life_interface.place(x, y, color)
 
     def clear(self):
         """Clears the display.
-		Note: this does not clear the text area!
-		"""
+        Note: this does not clear the text area!
+        """
 
         self.life_interface.clear()
 
     def show(self):
-        """Show the changes made to the display (i.e. after calling place or clear)
-		"""
+        """Show the changes made to the display (i.e. after calling place or clear)"""
 
         self.life_interface.show()
 
     def get_event(self):
         """Returns an event generated from the display.
-		The returned object has 2 properties:
-		- name: holds the group which the event belongs to.
-		- data: holds useful information for the user.
-		"""
+        The returned object has 2 properties:
+        - name: holds the group which the event belongs to.
+        - data: holds useful information for the user.
+        """
 
         return self.life_interface.get_event()
 
     def set_animation_speed(self, fps):
         """Set an event to repeat 'fps' times per second.
-		If the value is set to 0 or less, the repeating will halt.
-		In theory the maximum value is 1000, but this depends on activity of the system.
+        If the value is set to 0 or less, the repeating will halt.
+        In theory the maximum value is 1000, but this depends on activity of the system.
 
-		The generated events (available by using get_event) have these properties:
-		- name: 'alarm'.
-		- data: 'refresh'.
-		"""
+        The generated events (available by using get_event) have these properties:
+        - name: 'alarm'.
+        - data: 'refresh'.
+        """
 
         _verify_float(fps, "Animation speed")
         self.life_interface.set_animation_speed(fps)
 
     def print_(self, text):
         """Print text to the text area on the display.
-		This function does not add a trailing newline by itself.
-		"""
+        This function does not add a trailing newline by itself.
+        """
 
         _verify_str(text, "Text")
         self.life_interface.print_(text)
 
     def clear_text(self):
-        """Clears the text area on the display.
-		"""
+        """Clears the text area on the display."""
 
         self.life_interface.clear_text()
 
     def wait(self, ms):
         """Let your program wait for an amount of milliseconds.
 
-		This function only guarantees that it will wait at least this amount of time.
-		If the system, i.e., is too busy, then this time might increase.
-		- Python time module.
-		"""
+        This function only guarantees that it will wait at least this amount of time.
+        If the system, i.e., is too busy, then this time might increase.
+        - Python time module.
+        """
 
         _verify_int(ms, "Waiting time", 0)
         self.life_interface.wait(ms)
 
     def random(self, maximum):
         """Picks a random integer ranging from 0 <= x < maximum
-		Minimum for maximum is 1
-		"""
+        Minimum for maximum is 1
+        """
 
-        _verify_int(maximum, 'Random', 1)
+        _verify_int(maximum, "Random", 1)
         return self.life_interface.random(maximum)
 
     def close(self):
-        """Closes the display and stops your program.
-		"""
+        """Closes the display and stops your program."""
 
         self.life_interface.close()
 
     def stay_open(self):
         """Force the window to remain open.
-		Only has effect on Mac OS to prevent the window from closing after the execution finishes.
+        Only has effect on Mac OS to prevent the window from closing after the execution finishes.
 
-		Make sure that this is the last statement you call when including it because the code does NOT continue after this.
-		"""
+        Make sure that this is the last statement you call when including it because the code does NOT continue after this.
+        """
 
         global _ui_factory
         _ui_factory.mainroot.mainloop()
@@ -1335,8 +1447,11 @@ class _Life(object):
         self.text_height = int(100 * scale)
 
         # create main frame
-        self.frame = _tk.Frame(self.root, width=self.size_per_coord * self.width,
-                               height=self.size_per_coord * self.height + self.text_height)
+        self.frame = _tk.Frame(
+            self.root,
+            width=self.size_per_coord * self.width,
+            height=self.size_per_coord * self.height + self.text_height,
+        )
         self.frame.pack_propagate(0)
         self.frame.pack()
 
@@ -1346,8 +1461,14 @@ class _Life(object):
         self.img_refs = []  # for storing references to images - order: dead, alive
 
         # create and fill the canvas --> paintable area
-        self.c = _tk.Canvas(self.frame, width=self.size_per_coord * self.width,
-                            height=self.size_per_coord * self.height, bg=self.BACKGROUND, bd=0, highlightthickness=0)
+        self.c = _tk.Canvas(
+            self.frame,
+            width=self.size_per_coord * self.width,
+            height=self.size_per_coord * self.height,
+            bg=self.BACKGROUND,
+            bd=0,
+            highlightthickness=0,
+        )
         self.c.pack()
         self.last_x = -1  # used to generate mouseOver/Exit events
         self.last_y = -1  # used to generate mouseOver/Exit events
@@ -1467,7 +1588,16 @@ class _Life(object):
             x2 = x0 + self.size_per_coord - 1
             y2 = y0 + self.size_per_coord - 1
             result.append(
-                self.c.create_rectangle(x1, y1, x2, y2, state=state_, fill="#%02X%02X%02X" % (r, g, b), width=1))
+                self.c.create_rectangle(
+                    x1,
+                    y1,
+                    x2,
+                    y2,
+                    state=state_,
+                    fill="#%02X%02X%02X" % (r, g, b),
+                    width=1,
+                )
+            )
         if img == self.ALIVE:
             r = 0
             g = 0
@@ -1478,7 +1608,16 @@ class _Life(object):
             x2 = x0 + self.size_per_coord - 1
             y2 = y0 + self.size_per_coord - 1
             result.append(
-                self.c.create_rectangle(x1, y1, x2, y2, state=state_, fill="#%02X%02X%02X" % (r, g, b), width=1))
+                self.c.create_rectangle(
+                    x1,
+                    y1,
+                    x2,
+                    y2,
+                    state=state_,
+                    fill="#%02X%02X%02X" % (r, g, b),
+                    width=1,
+                )
+            )
 
         return result
 
@@ -1530,38 +1669,38 @@ class _Life(object):
 
     def alt_number_event(self, event):
         if event.char == event.keysym:
-            if ord(event.char) >= ord('0') and ord(event.char) <= ord('9'):
+            if ord(event.char) >= ord("0") and ord(event.char) <= ord("9"):
                 self.generate_event("alt_number", event.char)
 
     def key_event(self, event):
         if event.char == event.keysym:
-            if ord(event.char) >= ord('0') and ord(event.char) <= ord('9'):
+            if ord(event.char) >= ord("0") and ord(event.char) <= ord("9"):
                 self.generate_event("number", event.char)
-            elif ord(event.char) >= ord('a') and ord(event.char) <= ord('z'):
+            elif ord(event.char) >= ord("a") and ord(event.char) <= ord("z"):
                 self.generate_event("letter", event.char)
-            elif ord(event.char) >= ord('A') and ord(event.char) <= ord('Z'):
+            elif ord(event.char) >= ord("A") and ord(event.char) <= ord("Z"):
                 self.generate_event("letter", event.char)
             else:
                 self.generate_event("other", event.char)
-        elif event.keysym == 'Up':
+        elif event.keysym == "Up":
             self.generate_event("arrow", "u")
-        elif event.keysym == 'Down':
+        elif event.keysym == "Down":
             self.generate_event("arrow", "d")
-        elif event.keysym == 'Left':
+        elif event.keysym == "Left":
             self.generate_event("arrow", "l")
-        elif event.keysym == 'Right':
+        elif event.keysym == "Right":
             self.generate_event("arrow", "r")
-        elif event.keysym == 'Multi_Key':
+        elif event.keysym == "Multi_Key":
             return
-        elif event.keysym == 'Caps_Lock':
+        elif event.keysym == "Caps_Lock":
             self.generate_event("other", "caps lock")
-        elif event.keysym == 'Num_Lock':
+        elif event.keysym == "Num_Lock":
             self.generate_event("other", "num lock")
-        elif event.keysym == 'Shift_L' or event.keysym == 'Shift_R':
+        elif event.keysym == "Shift_L" or event.keysym == "Shift_R":
             self.generate_event("other", "shift")
-        elif event.keysym == 'Control_L' or event.keysym == 'Control_R':
+        elif event.keysym == "Control_L" or event.keysym == "Control_R":
             self.generate_event("other", "control")
-        elif event.keysym == 'Alt_L' or event.keysym == 'Alt_R':
+        elif event.keysym == "Alt_L" or event.keysym == "Alt_R":
             self.generate_event("other", "alt")
         else:
             self.generate_event("other", event.keysym)
@@ -1595,55 +1734,56 @@ class _Life(object):
 class Event(object):
     def __init__(self, name, data):
         """This class holds the name and data for each event in their respective variables.
-		Variables:
-		- name
-		- data
+        Variables:
+        - name
+        - data
 
-		Example to access with SnakeUserInterface:
+        Example to access with SnakeUserInterface:
 
-		ui = SnakeUserInterface(5,5) # 5 by 5 grid for testing purposes
-		your_variable = ui.get_event() # code will block untill an event comes
-		# your_variable now points to an event
-		print your_variable.name, your_variable.data
+        ui = SnakeUserInterface(5,5) # 5 by 5 grid for testing purposes
+        your_variable = ui.get_event() # code will block untill an event comes
+        # your_variable now points to an event
+        print your_variable.name, your_variable.data
 
-		List of events:
-		- name: mouseover
-		  data: x and y coordinates (as integers), separated by a space
-			  generated when mouse goes over a coordinate on the window
-		- name: mouseexit
-		  data: x and y coordinates (as integers), separated by a space
-			  generated when mouse exits a coordinate on the window
-		- name: click
-		  data: x and y coordinates (as integers), separated by a space
-			  generated when the user clicks on a coordinate on the window
-		- name: alarm
-		  data: refresh
-			  generated as often per second as the user set the animation speed to; note that the data is exactly as it says: "refresh"
-		- name: letter
-		  data: the letter that got pressed
-			  generated when the user presses on a letter (A to Z; can be lowercase or uppercase depending on shift/caps lock)
-		- name: number
-		  data: the number (as a string) that got pressed
-			  generated when the user presses on a number (0 to 9)
-		- name: alt_number
-		  data: the number (as a string) that got pressed
-			  generated when the user presses on a number (0 to 9) while at the same time pressing the Alt key
-		- name: arrow
-		  data: the arrow key that got pressed, given by a single letter
-			  generated when the user presses on an arrow key, data is then one of: l, r, u, d
-		- name: other
-		  data: data depends on key pressed
-			  generated when the user pressed a different key than those described above
-			  possible data:
-			  - caps_lock
-			  - num_lock
-			  - alt
-			  - control
-			  - shift
-			  more data can exist and are recorded (read: they generate events), but not documented
-		"""
+        List of events:
+        - name: mouseover
+          data: x and y coordinates (as integers), separated by a space
+                  generated when mouse goes over a coordinate on the window
+        - name: mouseexit
+          data: x and y coordinates (as integers), separated by a space
+                  generated when mouse exits a coordinate on the window
+        - name: click
+          data: x and y coordinates (as integers), separated by a space
+                  generated when the user clicks on a coordinate on the window
+        - name: alarm
+          data: refresh
+                  generated as often per second as the user set the animation speed to; note that the data is exactly as it says: "refresh"
+        - name: letter
+          data: the letter that got pressed
+                  generated when the user presses on a letter (A to Z; can be lowercase or uppercase depending on shift/caps lock)
+        - name: number
+          data: the number (as a string) that got pressed
+                  generated when the user presses on a number (0 to 9)
+        - name: alt_number
+          data: the number (as a string) that got pressed
+                  generated when the user presses on a number (0 to 9) while at the same time pressing the Alt key
+        - name: arrow
+          data: the arrow key that got pressed, given by a single letter
+                  generated when the user presses on an arrow key, data is then one of: l, r, u, d
+        - name: other
+          data: data depends on key pressed
+                  generated when the user pressed a different key than those described above
+                  possible data:
+                  - caps_lock
+                  - num_lock
+                  - alt
+                  - control
+                  - shift
+                  more data can exist and are recorded (read: they generate events), but not documented
+        """
         self.name = name
         self.data = data
+
 
 class StockMarketUserInterface(object):
     def __init__(self, enable_cache=False):
@@ -1654,30 +1794,30 @@ class StockMarketUserInterface(object):
             enable_cache: if set to True retrieved data will be cached.
         """
         if not have_mpl:
-            raise Exception('Use of HouseMarketUserInterface has been disabled.')
+            raise Exception("Use of HouseMarketUserInterface has been disabled.")
         self._enable_cache = enable_cache
         pass
 
     def _yql_query(self, q, _format, env):
-        req = {
-            'q': q,
-            'format': _format,
-            'env': env
-        }
+        req = {"q": q, "format": _format, "env": env}
 
         data = urllib.parse.urlencode(req)
-        whole_url = YAHOO_URL + '?' + data
+        whole_url = YAHOO_URL + "?" + data
         request = urllib.request.Request(whole_url)
         handler = urllib.request.urlopen(request)
         response = json.loads(handler.read())
         return response
 
     def _av_query(self, symbol):
-        whole_url = ALPHA_VANTAGE_URL + "?function=TIME_SERIES_DAILY_ADJUSTED&apikey=Z2YF&symbol=%s&outputsize=full" % symbol
+        whole_url = (
+            ALPHA_VANTAGE_URL
+            + "?function=TIME_SERIES_DAILY_ADJUSTED&apikey=Z2YF&symbol=%s&outputsize=full"
+            % symbol
+        )
         request = urllib.request.Request(whole_url)
         handler = urllib.request.urlopen(request)
         response = json.loads(handler.read())
-        if 'Error Message' in response:  # retry once... AV fails... decently often
+        if "Error Message" in response:  # retry once... AV fails... decently often
             request = urllib.request.Request(whole_url)
             handler = urllib.request.urlopen(request)
             response = json.loads(handler.read())
@@ -1721,12 +1861,12 @@ class StockMarketUserInterface(object):
 
     def _av_rekey(self, dictionary):
         rekey = {
-            'Adj_Close': '5. adjusted close',  # for the original assignment
-            'open': '1. open',
-            'high': '2. high',
-            'low': '3. low',
-            'close': '4. close',
-            'volume': '6. volume'
+            "Adj_Close": "5. adjusted close",  # for the original assignment
+            "open": "1. open",
+            "high": "2. high",
+            "low": "3. low",
+            "close": "4. close",
+            "volume": "6. volume",
         }
         new = {}
         for v, k in rekey.items():
@@ -1755,15 +1895,25 @@ class StockMarketUserInterface(object):
                 return cached
 
         response = self._av_query(symbol)
-        if 'Error Message' in response:
+        if "Error Message" in response:
             raise Exception("No data available for quote symbol %s." % symbol)
 
-        results = response['Time Series (Daily)']  # type: dict
+        results = response["Time Series (Daily)"]  # type: dict
         # fuck its not sorted
         st = _time.strptime(start, "%Y-%m-%d")
         sp = _time.strptime(end, "%Y-%m-%d")
-        quotes = [t for t in [(_time.strptime(x[0].split()[0], "%Y-%m-%d"), x[1]) for x in list(results.items())] if sp >= t[0] >= st]
-        formatted_quotes = [self._av_rekey(x[1]) for x in sorted(quotes,key=lambda x: x[0], reverse=True)]
+        quotes = [
+            t
+            for t in [
+                (_time.strptime(x[0].split()[0], "%Y-%m-%d"), x[1])
+                for x in list(results.items())
+            ]
+            if sp >= t[0] >= st
+        ]
+        formatted_quotes = [
+            self._av_rekey(x[1])
+            for x in sorted(quotes, key=lambda x: x[0], reverse=True)
+        ]
         if self._enable_cache:
             self._store_cache(self._cache_hash(symbol, start, end), formatted_quotes)
         return formatted_quotes
@@ -1781,7 +1931,7 @@ class StockMarketUserInterface(object):
         """
         t = plt.arange(0, len(prices), 1)
         lines = plt.plot(t, prices, c=color)
-        kwargs['linewidth'] = 2.0
+        kwargs["linewidth"] = 2.0
         plt.setp(lines, **kwargs)
         return lines
 
@@ -1789,15 +1939,15 @@ class StockMarketUserInterface(object):
         """
         Draw the current state of the ui.
         """
-        plt.ylabel('Returns')
-        plt.xlabel('Day')
+        plt.ylabel("Returns")
+        plt.xlabel("Day")
         plt.show()
 
 
 class HouseMarketUserInterface(object):
     def __init__(self):
         if not have_mpl:
-            raise Exception('Use of HouseMarketUserInterface has been disabled.')
+            raise Exception("Use of HouseMarketUserInterface has been disabled.")
         self.max_x = 0  # Keep track of max observer x-value
 
     def plot_dot(self, x, y, color, **kwargs):
@@ -1816,7 +1966,7 @@ class HouseMarketUserInterface(object):
             self.max_x = max(max(x), self.max_x)
         else:
             self.max_x = max(x, self.max_x)
-        plt.plot(x, y, 'o', c=color, **kwargs)
+        plt.plot(x, y, "o", c=color, **kwargs)
 
     def plot_line(self, *args, **kwargs):
         """
@@ -1833,8 +1983,8 @@ class HouseMarketUserInterface(object):
         """
         Draw the current state of the ui.
         """
-        plt.ylabel('House Price')
-        plt.xlabel('House Size (m^2)')
+        plt.ylabel("House Price")
+        plt.xlabel("House Size (m^2)")
         orig_limit_x = plt.xlim()
         orig_limit_y = plt.ylim()
         a = plt.xlim(orig_limit_x[0], self.max_x + 0.1 * self.max_x)
