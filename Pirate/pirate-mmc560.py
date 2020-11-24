@@ -7,7 +7,8 @@ class Coordinate:
     def __init__(self, item):
         self.x = int(item.split(",")[0]) + 1
         self.y = int(item.split(",")[1])
-        self.coord = str(self.x) +","+ str(self.y)
+        self.coord = str(self.x) + "," + str(self.y)
+
     def __repr__(self):
         return "{}".format(self.coord)
 
@@ -18,15 +19,17 @@ class CoordinateRow:
             self.coords = [Coordinate(item) for item in row.split()]
         else:
             self.coords = [Coordinate(item) for item in row]
+
     def __repr__(self):
         c_str = ""
         for c in self.coords:
             c_str += "{} ".format(c)
-        return "Coordinates are: {}".format(c_str)
+        return "This row has the following coordinates: {}".format(c_str)
 
     def interlace(self, new_row):
         temp_coords = []
-        for i in range(max(len(self.coords), len(new_row.coords))):
+        interlations = max(len(self.coords), len(new_row.coords))
+        for i in range(interlations):
             try:
                 temp_coords.append(self.coords[i])
             except IndexError:
@@ -38,17 +41,23 @@ class CoordinateRow:
         self.coords = temp_coords
 
 
-if __name__ == "__main__":
+def read_input():
     with open("PirateInput.txt", "r") as input_file:
-        rows = input_file.read().split("=")
-    
-    all_coordinates = []
-    for i, row in enumerate(rows):
-        if not i == 0:
-            all_coordinates.interlace(CoordinateRow(row))
-        else:
-            all_coordinates = CoordinateRow(row)
+        return input_file.read().split("=")
 
-    print("The path is:")
-    for c in all_coordinates.coords:
-        print(c)
+
+def write_outupt(coordinates):
+    with open("PirateOutput.txt", "w") as output_file:
+        for coordinate in coordinates:
+            output_file.write(str(coordinate) + "\n")
+
+
+if __name__ == "__main__":
+    all_coordinates = []
+    for i, row in enumerate(read_input()):
+        if i == 0:
+            all_coordinates = CoordinateRow(row)
+        else:
+            all_coordinates.interlace(CoordinateRow(row))
+
+    write_outupt(all_coordinates.coords)
