@@ -7,18 +7,14 @@ class Coordinate:
     def __init__(self, item):
         self.x = int(item.split(",")[0]) + 1
         self.y = int(item.split(",")[1])
-        self.coord = str(self.x) + "," + str(self.y)
 
     def __repr__(self):
-        return "{}".format(self.coord)
+        return "{},{}".format(self.x, self.y)
 
 
 class CoordinateRow:
     def __init__(self, row):
-        if type(row) == str:
-            self.coords = [Coordinate(item) for item in row.split()]
-        else:
-            self.coords = [Coordinate(item) for item in row]
+        self.coords = [Coordinate(item) for item in row.split()]
 
     def __repr__(self):
         c_str = ""
@@ -46,9 +42,10 @@ def read_input():
         return input_file.read().split("=")
 
 
-def write_outupt(coordinates):
+def write_output(coordinates):
     with open("PirateOutput.txt", "w") as output_file:
         for coordinate in coordinates:
+            print(coordinate)
             output_file.write(str(coordinate) + "\n")
 
 
@@ -60,4 +57,4 @@ if __name__ == "__main__":
         else:
             all_coordinates.interlace(CoordinateRow(row))
 
-    write_outupt(all_coordinates.coords)
+    write_output(all_coordinates.coords)
