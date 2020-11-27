@@ -63,7 +63,7 @@ def process_lines(lines):
 
 
 if __name__ == "__main__":
-    filename = str(input("What is the file name (leave empty if \"input.txt\"): "))
+    filename = str(input('What is the file name (leave empty if "input.txt"): '))
     if filename == "":
         filename = "input.txt"
 
