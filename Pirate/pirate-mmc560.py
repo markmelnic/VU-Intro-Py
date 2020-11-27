@@ -17,23 +17,17 @@ class CoordinateRow:
         self.coords = [Coordinate(item) for item in row.split()]
 
     def __repr__(self):
-        c_str = ""
-        for c in self.coords:
-            c_str += "{} ".format(c)
-        return "This row has the following coordinates: {}".format(c_str)
+        c_str = "".join([str(c) + " " for c in self.coords])
+        return "This row has the following coordinates: " + c_str
 
     def interlace(self, new_row):
         temp_coords = []
         interlations = max(len(self.coords), len(new_row.coords))
         for i in range(interlations):
-            try:
+            if len(self.coords) > i:
                 temp_coords.append(self.coords[i])
-            except IndexError:
-                pass
-            try:
+            if len(new_row.coords) > i:
                 temp_coords.append(new_row.coords[i])
-            except IndexError:
-                pass
         self.coords = temp_coords
 
 
@@ -50,7 +44,6 @@ def write_output(coordinates):
 
 
 if __name__ == "__main__":
-    all_coordinates = []
     for i, row in enumerate(read_input()):
         if i == 0:
             all_coordinates = CoordinateRow(row)
