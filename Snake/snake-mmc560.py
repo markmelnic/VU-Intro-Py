@@ -4,19 +4,49 @@
 
 from ipy_lib3 import SnakeUserInterface
 
-HEIGHT = 32
-WIDTH = 24
-snake_pos = [(0, 0), (1, 0)]
-food_pos = (0, 0)
+WIDTH = 32
+HEIGHT = 24
 event_name = "arrow"
-event_data = "r"
+walls = []
+
+filename = str(
+    input(
+        "Do you have a level to load? Type the file name here, otherwise just press ENTER: "
+    )
+)
+if not filename == "":
+    with open(filename, "r") as level:
+        content = level.read().split("=")
+        event_data = content[1].lower()
+
+        snake_pos = []
+        for pos in content[0][::-1].split("\n"):
+            pos = pos.split()
+            snake_pos.append((int(pos[0]), int(pos[1])))
+
+        for pos in content[2][:-1].split("\n"):
+            pos = pos.split()
+            walls.append((int(pos[0]), int(pos[1])))
+
+else:
+    snake_pos = [(0, 0), (1, 0)]
+    event_data = "r"
+food_pos = snake_pos[0]
 
 if __name__ == "__main__":
     root = SnakeUserInterface(WIDTH, HEIGHT)
-    while food_pos in snake_pos:
+    while food_pos in snake_pos or food_pos in walls:
         food_pos = (root.random(WIDTH), root.random(HEIGHT))
 
     while True:
+        root.clear()
+        root.place(food_pos[0], food_pos[1], 1)
+        for pos in snake_pos:
+            root.place(pos[0], pos[1], 2)
+        for pos in walls:
+            root.place(pos[0], pos[1], 3)
+        root.show()
+
         ev = root.get_event()
         if ev.name == "arrow":
             if (
@@ -27,6 +57,12 @@ if __name__ == "__main__":
             ):
                 event_name = ev.name
                 event_data = ev.data
+                root.clear_text()
+            else:
+                root.clear_text()
+                root.print_("You made an illegal move. For example you tried to move left while going right. The previous move will be continued.")
+        else:
+            continue
 
         if event_name == "arrow":
             if event_data == "r":
@@ -38,7 +74,8 @@ if __name__ == "__main__":
             elif event_data == "d":
                 new_piece = (snake_pos[-1][0], snake_pos[-1][1] + 1)
 
-            if new_piece in snake_pos:
+            if new_piece in snake_pos or any(pos in walls for pos in snake_pos):
+                root.clear_text()
                 root.print_("Game over")
                 break
             else:
@@ -58,17 +95,10 @@ if __name__ == "__main__":
                         piece[1] = 0
                         snake_pos[i] = tuple(piece)
                 if snake_pos[-1] == food_pos:
-                    while food_pos in snake_pos:
+                    while food_pos in snake_pos or food_pos in walls:
                         food_pos = (root.random(WIDTH), root.random(HEIGHT))
                 else:
                     snake_pos.pop(0)
-
-        root.clear()
-        root.place(food_pos[0], food_pos[1], 1)
-        for pos in snake_pos:
-            root.place(pos[0], pos[1], 2)
-        root.show()
-        # root.wait(500)
 
     root.stay_open()
     root.close()
