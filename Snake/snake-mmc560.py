@@ -74,12 +74,12 @@ if __name__ == "__main__":
             elif event_data == "d":
                 new_piece = (snake_pos[-1][0], snake_pos[-1][1] + 1)
 
-            if new_piece in snake_pos or any(pos in walls for pos in snake_pos):
+            snake_pos.append(new_piece)
+            if len(snake_pos) != len(set(snake_pos)) or any(pos in walls for pos in snake_pos):
                 root.clear_text()
                 root.print_("Game over")
                 break
             else:
-                snake_pos.append(new_piece)
                 for i, piece in enumerate(snake_pos):
                     piece = list(piece)
                     if piece[0] == -1:
