@@ -1,11 +1,30 @@
 """ Assignment: Snake
-    Created on 2 dec. 2020
+    Created on 4 dec. 2020
     @author: Mark Melnic """
 
 from ipy_lib3 import LifeUserInterface
 
 WIDTH = 9
 HEIGHT = 9
+
+def load_file():
+    filename = str(input("Type the file to load here: "))
+    with open(filename, "r") as input_file:
+        return input_file.readlines()
+
+def load_data(file_lines):
+    gen_nr = int(file_lines.pop(0))
+    osc_nr = int(file_lines.pop(0))
+    board_cfg = []
+    for line in file_lines:
+        temp = []
+        for ch in line:
+            if ch == " ":
+                temp.append(0)
+            elif ch == "x":
+                temp.append(1)
+        board_cfg.append(temp)
+    return gen_nr, osc_nr, board_cfg
 
 def surrounding(board, x, y):
     ret = []
@@ -30,22 +49,8 @@ def check_neighbours(board, i, j):
             item = 0
     return item
 
-with open("LifeInput3.txt", "r") as input_file:
-    lines = input_file.readlines()
-
-gen_nr = int(lines.pop(0))
-osc_nr = int(lines.pop(0))
-board_cfg = []
-for line in lines:
-    temp = []
-    for ch in line:
-        if ch == " ":
-            temp.append(0)
-        elif ch == "x":
-            temp.append(1)
-    board_cfg.append(temp)
-
 if __name__ == "__main__":
+    gen_nr, osc_nr, board_cfg = load_data(load_file())
     root = LifeUserInterface(WIDTH, HEIGHT)
     for i in range(gen_nr):
         root.clear()
