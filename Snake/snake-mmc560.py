@@ -36,6 +36,15 @@ def generate_food():
         food_pos = (root.random(WIDTH), root.random(HEIGHT))
     return food_pos
 
+def display():
+    root.clear()
+    root.place(food_pos[0], food_pos[1], 1)
+    for pos in snake_pos:
+        root.place(pos[0], pos[1], 2)
+    for pos in walls:
+        root.place(pos[0], pos[1], 3)
+    root.show()
+
 if __name__ == "__main__":
     event_name = "arrow"
     snake_pos, event_data, walls = read_level()
@@ -44,13 +53,7 @@ if __name__ == "__main__":
     root = SnakeUserInterface(WIDTH, HEIGHT)
     food_pos = generate_food()
     while True:
-        root.clear()
-        root.place(food_pos[0], food_pos[1], 1)
-        for pos in snake_pos:
-            root.place(pos[0], pos[1], 2)
-        for pos in walls:
-            root.place(pos[0], pos[1], 3)
-        root.show()
+        display()
 
         ev = root.get_event()
         if ev.name == "arrow":
