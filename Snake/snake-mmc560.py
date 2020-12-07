@@ -45,6 +45,18 @@ def display():
         root.place(pos[0], pos[1], 3)
     root.show()
 
+def check_event_direction():
+    new_piece = ()
+    if event_data == "r":
+        new_piece = (snake_pos[-1][0] + 1, snake_pos[-1][1])
+    elif event_data == "l":
+        new_piece = (snake_pos[-1][0] - 1, snake_pos[-1][1])
+    elif event_data == "u":
+        new_piece = (snake_pos[-1][0], snake_pos[-1][1] - 1)
+    elif event_data == "d":
+        new_piece = (snake_pos[-1][0], snake_pos[-1][1] + 1)
+    return new_piece
+
 if __name__ == "__main__":
     event_name = "arrow"
     snake_pos, event_data, walls = read_level()
@@ -69,20 +81,8 @@ if __name__ == "__main__":
             else:
                 root.clear_text()
                 root.print_("You made an illegal move. For example you tried to move left while going right. The previous move will be continued.")
-        else:
-            continue
 
-        if event_name == "arrow":
-            if event_data == "r":
-                new_piece = (snake_pos[-1][0] + 1, snake_pos[-1][1])
-            elif event_data == "l":
-                new_piece = (snake_pos[-1][0] - 1, snake_pos[-1][1])
-            elif event_data == "u":
-                new_piece = (snake_pos[-1][0], snake_pos[-1][1] - 1)
-            elif event_data == "d":
-                new_piece = (snake_pos[-1][0], snake_pos[-1][1] + 1)
-            snake_pos.append(new_piece)
-
+            snake_pos.append(check_event_direction())
             if len(snake_pos) != len(set(snake_pos)) or any(pos in walls for pos in snake_pos):
                 root.clear_text()
                 root.print_("Game over")
@@ -102,10 +102,13 @@ if __name__ == "__main__":
                     elif piece[1] == HEIGHT:
                         piece[1] = 0
                         snake_pos[i] = tuple(piece)
+
                 if snake_pos[-1] == food_pos:
                     food_pos = generate_food()
                 else:
                     snake_pos.pop(0)
+        else:
+            continue
 
     root.stay_open()
     root.close()
