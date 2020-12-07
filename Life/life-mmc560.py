@@ -49,20 +49,31 @@ def check_neighbours(board, i, j):
             item = 0
     return item
 
+def next_iteration(root):
+    new_board_cfg = []
+    for i, line in enumerate(board_cfg):
+        temp_line = []
+        for j, ch in enumerate(line):
+            new_ch = check_neighbours(board_cfg, i, j)
+            temp_line.append(new_ch)
+            root.place(j, i, new_ch)
+        new_board_cfg.append(temp_line)
+    return new_board_cfg
+
 if __name__ == "__main__":
     gen_nr, osc_nr, board_cfg = load_data(load_file())
     root = LifeUserInterface(WIDTH, HEIGHT)
     for i in range(gen_nr):
         root.clear()
-        new_board_cfg = []
-        for i, line in enumerate(board_cfg):
-            temp_line = []
-            for j, ch in enumerate(line):
-                new_ch = check_neighbours(board_cfg, i, j)
-                temp_line.append(new_ch)
-                root.place(j, i, new_ch)
-            new_board_cfg.append(temp_line)
-
+        board_cfg = next_iteration(root)
         root.show()
         root.wait(100)
-        board_cfg = new_board_cfg
+
+    first_cfg = board_cfg
+    for i in range(osc_nr):
+        if i == 1 and first_cfg == board_cfg:
+            root.print_("Static figure\n")
+        elif first_cfg == board_cfg:
+            root.print_("Oscillating figure\n")
+        board_cfg = next_iteration(root)
+    root.stay_open()
