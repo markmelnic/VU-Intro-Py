@@ -63,25 +63,23 @@ if __name__ == "__main__":
     food_pos = snake_pos[0]
 
     root = SnakeUserInterface(WIDTH, HEIGHT)
+    root.set_animation_speed(4)
     food_pos = generate_food()
     while True:
         display()
 
         ev = root.get_event()
-        if ev.name == "arrow":
-            if (
-                (event_data == "r" and not ev.data == "l") or
-                (event_data == "l" and not ev.data == "r") or
-                (event_data == "u" and not ev.data == "d") or
-                (event_data == "d" and not ev.data == "u")
-            ):
-                event_name = ev.name
-                event_data = ev.data
-                root.clear_text()
-            else:
-                root.clear_text()
-                root.print_("You made an illegal move. For example you tried to move left while going right. The previous move will be continued.")
+        if ev.name == "arrow" and (
+            (event_data == "r" and not ev.data == "l") or
+            (event_data == "l" and not ev.data == "r") or
+            (event_data == "u" and not ev.data == "d") or
+            (event_data == "d" and not ev.data == "u")
+        ):
+            event_name = ev.name
+            event_data = ev.data
+            root.clear_text()
 
+        if ev.data == "refresh":
             snake_pos.append(check_event_direction())
             if len(snake_pos) != len(set(snake_pos)) or any(pos in walls for pos in snake_pos):
                 root.clear_text()
@@ -107,8 +105,6 @@ if __name__ == "__main__":
                     food_pos = generate_food()
                 else:
                     snake_pos.pop(0)
-        else:
-            continue
 
     root.stay_open()
     root.close()
