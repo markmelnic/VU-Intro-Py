@@ -4,6 +4,7 @@
 
 from ipy_lib3 import SnakeUserInterface
 
+ANIMATION_SPEED = 4
 WIDTH = 32
 HEIGHT = 24
 
@@ -24,87 +25,97 @@ def read_level():
             for pos in content[2][:-1].split("\n"):
                 pos = pos.split()
                 walls.append((int(pos[0]), int(pos[1])))
-
     else:
         snake_pos = [(0, 0), (1, 0)]
         event_data = "r"
     return snake_pos, event_data, walls
 
-def generate_food():
-    food_pos = (root.random(WIDTH), root.random(HEIGHT))
-    while food_pos in snake_pos or food_pos in walls:
-        food_pos = (root.random(WIDTH), root.random(HEIGHT))
-    return food_pos
+class Logic():
+    def __init__(self, root):
+        self.root = root
+        self.root.set_animation_speed(ANIMATION_SPEED)
+        self.event_name = "arrow"
+        self.snake_pos, self.event_data, self.walls = read_level()
+        self.run()
 
-def display():
-    root.clear()
-    root.place(food_pos[0], food_pos[1], 1)
-    for pos in snake_pos:
-        root.place(pos[0], pos[1], 2)
-    for pos in walls:
-        root.place(pos[0], pos[1], 3)
-    root.show()
+    def run(self, ):
+        self.generate_food()
+        self.running = True
+        while self.running:
+            self.display()
+            self.event = self.root.get_event()
+            self.check_arrow_event()
+            if self.event.data == "refresh":
+                self.check_event_direction()
+                if self.check_position():
+                    self.move()
+                    self.check_food()
 
-def check_event_direction():
-    new_piece = ()
-    if event_data == "r":
-        new_piece = (snake_pos[-1][0] + 1, snake_pos[-1][1])
-    elif event_data == "l":
-        new_piece = (snake_pos[-1][0] - 1, snake_pos[-1][1])
-    elif event_data == "u":
-        new_piece = (snake_pos[-1][0], snake_pos[-1][1] - 1)
-    elif event_data == "d":
-        new_piece = (snake_pos[-1][0], snake_pos[-1][1] + 1)
-    return new_piece
+    def display(self, ):
+        self.root.clear()
+        self.root.place(self.food[0], self.food[1], 1)
+        for pos in self.snake_pos:
+            self.root.place(pos[0], pos[1], 2)
+        for pos in self.walls:
+            self.root.place(pos[0], pos[1], 3)
+        self.root.show()
+
+    def generate_food(self, ):
+        self.food = (self.root.random(WIDTH), self.root.random(HEIGHT))
+        while self.food in self.snake_pos or self.food in self.walls:
+            self.food = (self.root.random(WIDTH), self.root.random(HEIGHT))
+
+    def move(self, ):
+        for i, piece in enumerate(self.snake_pos):
+            piece = list(piece)
+            if piece[0] == -1:
+                piece[0] = WIDTH - 1
+                self.snake_pos[i] = tuple(piece)
+            elif piece[0] == WIDTH:
+                piece[0] = 0
+                self.snake_pos[i] = tuple(piece)
+            if piece[1] == -1:
+                piece[1] = HEIGHT - 1
+                self.snake_pos[i] = tuple(piece)
+            elif piece[1] == HEIGHT:
+                piece[1] = 0
+                self.snake_pos[i] = tuple(piece)
+
+    def check_event_direction(self, ):
+        if self.event_data == "r":
+            self.snake_pos.append((self.snake_pos[-1][0] + 1, self.snake_pos[-1][1]))
+        elif self.event_data == "l":
+            self.snake_pos.append((self.snake_pos[-1][0] - 1, self.snake_pos[-1][1]))
+        elif self.event_data == "u":
+            self.snake_pos.append((self.snake_pos[-1][0], self.snake_pos[-1][1] - 1))
+        elif self.event_data == "d":
+            self.snake_pos.append((self.snake_pos[-1][0], self.snake_pos[-1][1] + 1))
+
+    def check_arrow_event(self, ):
+        if self.event.name == "arrow" and (
+            (self.event_data == "r" and not self.event.data == "l") or
+            (self.event_data == "l" and not self.event.data == "r") or
+            (self.event_data == "u" and not self.event.data == "d") or
+            (self.event_data == "d" and not self.event.data == "u")
+        ):
+            self.event_name = self.event.name
+            self.event_data = self.event.data
+
+    def check_position(self, ):
+        if len(self.snake_pos) != len(set(self.snake_pos)) or any(pos in self.walls for pos in self.snake_pos):
+            self.root.clear_text()
+            self.root.print_("Game over")
+            self.running = False
+            self.root.stay_open()
+            return self.running
+        else:
+            return self.running
+
+    def check_food(self, ):
+        if self.snake_pos[-1] == self.food:
+            self.generate_food()
+        else:
+            self.snake_pos.pop(0)
 
 if __name__ == "__main__":
-    event_name = "arrow"
-    snake_pos, event_data, walls = read_level()
-    food_pos = snake_pos[0]
-
-    root = SnakeUserInterface(WIDTH, HEIGHT)
-    root.set_animation_speed(4)
-    food_pos = generate_food()
-    while True:
-        display()
-
-        ev = root.get_event()
-        if ev.name == "arrow" and (
-            (event_data == "r" and not ev.data == "l") or
-            (event_data == "l" and not ev.data == "r") or
-            (event_data == "u" and not ev.data == "d") or
-            (event_data == "d" and not ev.data == "u")
-        ):
-            event_name = ev.name
-            event_data = ev.data
-            root.clear_text()
-
-        if ev.data == "refresh":
-            snake_pos.append(check_event_direction())
-            if len(snake_pos) != len(set(snake_pos)) or any(pos in walls for pos in snake_pos):
-                root.clear_text()
-                root.print_("Game over")
-                break
-            else:
-                for i, piece in enumerate(snake_pos):
-                    piece = list(piece)
-                    if piece[0] == -1:
-                        piece[0] = WIDTH - 1
-                        snake_pos[i] = tuple(piece)
-                    elif piece[0] == WIDTH:
-                        piece[0] = 0
-                        snake_pos[i] = tuple(piece)
-                    if piece[1] == -1:
-                        piece[1] = HEIGHT - 1
-                        snake_pos[i] = tuple(piece)
-                    elif piece[1] == HEIGHT:
-                        piece[1] = 0
-                        snake_pos[i] = tuple(piece)
-
-                if snake_pos[-1] == food_pos:
-                    food_pos = generate_food()
-                else:
-                    snake_pos.pop(0)
-
-    root.stay_open()
-    root.close()
+    snake_game = Logic(SnakeUserInterface(WIDTH, HEIGHT))
