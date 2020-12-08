@@ -8,10 +8,11 @@ ANIMATION_SPEED = 4
 WIDTH = 32
 HEIGHT = 24
 
-def read_level():
+DEFAULT_SNAKE_POS = [(0, 0), (1, 0)]
+DEFAULT_EVENT_DATA = "r"
+
+def read_level(filename):
     walls = []
-    filename = str(input(
-            "Do you have a level to load? Type the file name here, otherwise just press ENTER: "))
     if not filename == "":
         with open(filename, "r") as level:
             content = level.read().split("=")
@@ -26,21 +27,29 @@ def read_level():
                 pos = pos.split()
                 walls.append((int(pos[0]), int(pos[1])))
     else:
-        snake_pos = [(0, 0), (1, 0)]
-        event_data = "r"
+        snake_pos = DEFAULT_SNAKE_POS
+        event_data = DEFAULT_EVENT_DATA
     return snake_pos, event_data, walls
 
 class Logic():
-    def __init__(self, root):
+    def __init__(self, root, filename):
         self.root = root
         self.root.set_animation_speed(ANIMATION_SPEED)
-        self.event_name = "arrow"
-        self.snake_pos, self.event_data, self.walls = read_level()
+        self.snake_pos, self.event_data, self.walls = read_level(filename)
+        self.running = True
+        self.start()
         self.run()
+
+    def start(self, ):
+        self.root.print_("Press any key to start!")
+        while self.running:
+            self.event = self.root.get_event()
+            if self.event.name == "other":
+                self.root.clear_text()
+                break
 
     def run(self, ):
         self.generate_food()
-        self.running = True
         while self.running:
             self.display()
             self.event = self.root.get_event()
@@ -53,11 +62,11 @@ class Logic():
 
     def display(self, ):
         self.root.clear()
-        self.root.place(self.food[0], self.food[1], 1)
+        self.root.place(self.food[0], self.food[1], self.root.FOOD)
         for pos in self.snake_pos:
-            self.root.place(pos[0], pos[1], 2)
+            self.root.place(pos[0], pos[1], self.root.SNAKE)
         for pos in self.walls:
-            self.root.place(pos[0], pos[1], 3)
+            self.root.place(pos[0], pos[1], self.root.WALL)
         self.root.show()
 
     def generate_food(self, ):
@@ -118,4 +127,5 @@ class Logic():
             self.snake_pos.pop(0)
 
 if __name__ == "__main__":
-    snake_game = Logic(SnakeUserInterface(WIDTH, HEIGHT))
+    filename = str(input("Do you have a level to load? Type the file name here, otherwise just press ENTER: "))
+    snake_game = Logic(SnakeUserInterface(WIDTH, HEIGHT), filename)
