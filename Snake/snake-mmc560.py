@@ -39,6 +39,7 @@ class Logic():
         self.running = True
         self.start()
         self.run()
+        self.root.stay_open()
 
     def start(self, ):
         self.root.print_("Press any key to start!")
@@ -59,6 +60,8 @@ class Logic():
                 if self.check_position():
                     self.move()
                     self.check_food()
+                else:
+                    self.display_dead()
 
     def display(self, ):
         self.root.clear()
@@ -90,6 +93,15 @@ class Logic():
                 piece[1] = 0
                 self.snake_pos[i] = tuple(piece)
 
+    def display_dead(self, ):
+        self.root.clear()
+        self.root.place_transparent(self.food[0], self.food[1], self.root.FOOD)
+        for pos in self.snake_pos:
+            self.root.place_transparent(pos[0], pos[1], self.root.SNAKE)
+        for pos in self.walls:
+            self.root.place_transparent(pos[0], pos[1], self.root.WALL)
+        self.root.show()
+
     def check_event_direction(self, ):
         if self.event_data == "r":
             self.snake_pos.append((self.snake_pos[-1][0] + 1, self.snake_pos[-1][1]))
@@ -115,7 +127,6 @@ class Logic():
             self.root.clear_text()
             self.root.print_("Game over")
             self.running = False
-            self.root.stay_open()
             return self.running
         else:
             return self.running
